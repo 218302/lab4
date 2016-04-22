@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <math.h>
+#include <bitset>
 
 using namespace std;
 
@@ -9,7 +9,7 @@ using namespace std;
 
 unsigned long long search_k(int number);
 unsigned long long convert_table_to_number(bool* numbers_digits, int number_of_digits);
-string write_number(int number);
+string write_number(unsigned long long number);
 
 
 
@@ -49,58 +49,40 @@ int main (int argc, char* argv[])
 
 unsigned long long search_k(int number)
 {
-	unsigned long long product;
-	bool* products_digits=new bool;
-	int number_of_digits=0;
 	bool found_solution=false;
+	bitset<20> binary_number(1);
+	string binary_number_str;
+	unsigned long long k;
 
 // Sprawdzanie kolejnych liczb zlozonych z samych zer i jedynek pod katem podzielnosci przez zadana liczbe.
 
 	do
 	{
-		products_digits[number_of_digits]=1;
-		number_of_digits++;
-		for(int i=0; i<number_of_digits-1; i++)
-			products_digits[i]=0;
-		product=convert_table_to_number(products_digits, number_of_digits);
-		if(product%number==0 && product!=0)
+		binary_number_str=binary_number.to_string();
+		k=stoull(binary_number_str);
+		if(k%number==0)
 		{
 			found_solution=true;
-			break;
 		}
-		unsigned long long number_of_digits_pow_2=pow(2, number_of_digits-1);
-		for(unsigned long long i=0; i<number_of_digits_pow_2; i++)
+		else
 		{
-			if(products_digits[0]==0)
-				products_digits[0]=1;
-			else
+			for(size_t i=0; i<20; i++)
 			{
-				for(int j=0; j<number_of_digits-1; j++)
+				if(binary_number[i]==0)
 				{
-					products_digits[j]=0;
-					if(products_digits[j+1]==0)
-					{
-						products_digits[j+1]=1;
-						break;
-					}
+					binary_number[i]=1;
+					break;
 				}
-			}
-			product=convert_table_to_number(products_digits, number_of_digits);
-			if(product%number==0 && product!=0)
-			{
-				found_solution=true;
-				break;
+				binary_number[i]=0;
 			}
 		}
-	} while(!found_solution && number_of_digits!=20);
-	unsigned long long k;
-	delete products_digits;
+	} while(!found_solution && k!=11111111111111111111);
 	if(!found_solution)
 	{
 		cout << "Reached minimum 'unsigned long long' variable limit (18'446'744'073'709'551'615) before number's multiple matching the conditions was found. Exiting..." << endl;
 		exit(4);
 	}
-	k=product/number;
+	k=k/number;
 
 
 
@@ -121,7 +103,7 @@ unsigned long long convert_table_to_number(bool* numbers_digits, int number_of_d
 	return number;
 }
 
-string write_number(int number)
+string write_number(unsigned long long number)
 {
 	if(number>999999)
 		return "Liczba spoza zakresu dostępnych liczebników";
